@@ -13,6 +13,7 @@ class User(models.Model):
     email = models.EmailField(max_length=255)
     user_password = models.TextField(max_length=255)
     level = models.ForeignKey(Level, related_name="user", on_delete=models.CASCADE)
-    image = models.ForeignKey(Images, related_name='user_image', on_delete=models.CASCADE)
+
+
 
 

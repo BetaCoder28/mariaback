@@ -2,4 +2,6 @@ from django.db import models
 
 
 class Images(models.Model):
-    image_path = models.TextField(max_length=255)
+    #Image Field permite manejar la carga de imagenes
+    image_path = models.ImageField(upload_to='image/')
+    #upload_to indica que las imagenes se guardarán en la carpeta images del directorio de medios

@@ -5,11 +5,8 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-#URL PARA servir archivos multimedia
-MEDIA_URL = '/media/'
-#RUTA DEL SISTEMA DONDE SE GUARDARAN LOS ARCHIVOS MULTIMEDIA
-MEDIA_ROOT = os.path.join(BASE_DIR)
+MEDIA_URL = '/sources/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'sources/media/')
 
 
 # Quick-start development settings - unsuitable for production

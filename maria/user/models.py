@@ -12,7 +12,7 @@ class User(models.Model):
     lastname = models.TextField(max_length=50)
     email = models.EmailField(max_length=255)
     user_password = models.TextField(max_length=255)
-    level = models.OneToOneField(Level,null=True, blank=True, related_name="user", on_delete=models.SET_NULL)
+    level = models.ForeignKey(Level,null=True, blank=True, on_delete=models.CASCADE, related_name="users")
     image = models.OneToOneField(Images, null=True, blank=True, on_delete=models.SET_NULL, related_name="user")
 
 

@@ -8,7 +8,7 @@ from images.serializers import ImagesSerializers
 class UserSerializer(serializers.ModelSerializer):
 
     image = ImagesSerializers(required=False)
-    level = serializers.CharField(source='level.level', read_only=True)
+    level = serializers.CharField(source='level.level')
 
     class Meta:
         model = User
@@ -20,19 +20,16 @@ class UserSerializer(serializers.ModelSerializer):
             'level',
             'image'
         ]
-    
-
-    def get_image(self,obj):
-        if obj.image:
-            return obj.image.image_path.name #Retornar ruta relativa
-        
-        return None
 
 
-    #crear un usuario con una imagen asociada en una sola solicitud.
     def create(self, validated_data):
         image_data = validated_data.pop('image', None)
-        user = User.objects.create(**validated_data)
+        level_data = validated_data.pop('level', {})
+        level_value = level_data.get('level','A0')
+
+        level_instace, _ = Level.objects.get_or_create(level = level_value)
+
+        user = User.objects.create(level=level_instace,**validated_data)
 
         if image_data:
             image = Images.objects.create(**image_data)

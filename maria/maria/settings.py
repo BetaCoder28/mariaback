@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'user',
     'topics',
     'images',
+    'conversation',
 ]
 
 MIDDLEWARE = [

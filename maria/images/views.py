@@ -4,6 +4,7 @@ from datetime import datetime
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings
+from django.views.generic.base import TemplateView
 from rest_framework import permissions, viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -33,10 +34,12 @@ class ImagesViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-def show_image(request):
-    """Vista que muestra una imagen desde una URL"""
-    image_url = request.GET.get('image', '')  # Obtener la URL de la imagen de los parámetros
-    if not image_url:
-        return HttpResponse("No image provided", status=400)
+class ShowImage(TemplateView):
 
-    return render(request, 'show_image.html', {'image_url': image_url})
+    def show_image(request):
+        """Vista que muestra una imagen desde una URL"""
+        image_url = request.GET.get('image', '')  # Obtener la URL de la imagen de los parámetros
+        if not image_url:
+            return HttpResponse("No image provided", status=400)
+
+        return render(request, 'show_image.html', {'image_url': image_url})

@@ -22,6 +22,9 @@ class ChatView(viewsets.ModelViewSet):
     serializer_class = MessagesSerializer
 
     def create(self, request):
+
+        print("Received data:", request.data)  # 👈 Agrega esto
+
         try:
             serializer = MessagesSerializer(data=request.data)
             if not serializer.is_valid():

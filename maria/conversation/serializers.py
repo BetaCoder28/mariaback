@@ -6,13 +6,16 @@ from .models import Messages
 class MessagesSerializer(serializers.ModelSerializer):
 
     topic = serializers.CharField(max_length=50, required=False, default='introduce yourself')
+    conversation_id = serializers.CharField(required=False, default="default_conversation")
+
 
     class Meta:
         model = Messages
         fields = [
             'role',
             'content',
-            'topic'
+            'topic',
+            'conversation_id'
         ]
 
     def __init__(self, *args, **kwargs):

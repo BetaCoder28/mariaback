@@ -1,4 +1,6 @@
 import os
+import base64
+
 from dotenv import load_dotenv
 
 from django.shortcuts import render
@@ -23,7 +25,7 @@ class ChatView(viewsets.ModelViewSet):
 
     def create(self, request):
 
-        print("Received data:", request.data)  # 👈 Agrega esto
+        print("Received data:", request.data) 
 
         try:
             serializer = MessagesSerializer(data=request.data)
@@ -33,14 +35,14 @@ class ChatView(viewsets.ModelViewSet):
             data = serializer.validated_data
             role = data['role']
             content = data['content']
-            topic = data.get('topic', 'introduce yourself')
+            topic = data.get('topic', 'if user dont ask anything, introduce yourself')
             conversation_id = request.data.get('conversation_id','default_conversation')
 
             if conversation_id not in conversation_history:
                 conversation_history[conversation_id] = [
                     {
                         "role" : 'system',
-                        "content" : f"You're an virtual assistant, your name is Maria, initialize the conversation talking about {topic}."
+                        "content" : f"Your name is Maria if you detect a mistake when the user speaks you say the correct way to speak or say the sentence, {topic}."
                     }   
                 ]
             conversation_history[conversation_id].append({
@@ -58,13 +60,31 @@ class ChatView(viewsets.ModelViewSet):
 
             assistant_message = response.choices[0].message.content
 
+            #Audio de la respuesta
+            audio_response = client.audio.speech.create(
+               model = "tts-1",
+               voice = 'nova',
+               input= assistant_message
+            )
+
             # Añadir la respuesta del asistente al historial
             conversation_history[conversation_id].append({
                 "role": "assistant",
                 "content": assistant_message
             })
 
-            return Response(assistant_message, status=status.HTTP_200_OK)
+            audio_data = audio_response.content
+
+            with open("output.mp3", 'wb') as f:
+                f.write(audio_data)
+
+            audio_base64 = base64.b64encode(audio_data).decode('utf-8')
+
+
+            return Response({
+                'text' : assistant_message,
+                'audio' : audio_base64
+            }, status=status.HTTP_200_OK)
         
         except Exception as e:
             return Response({

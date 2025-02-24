@@ -5,7 +5,7 @@ from .models import Messages
 
 class MessagesSerializer(serializers.ModelSerializer):
 
-    topic = serializers.CharField(max_length=50, required=False, default='introduce yourself')
+    topic = serializers.CharField(max_length=50, required=False, default='if user dont ask anything, introduce yourself')
     conversation_id = serializers.CharField(required=False, default="default_conversation")
 
 

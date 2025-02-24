@@ -44,7 +44,7 @@ class ChatView(viewsets.ModelViewSet):
                 conversation_history[conversation_id] = [
                     {
                         "role" : 'system',
-                        "content" : f"Your name is Maria you was created by DServices the owner is DavidBaar, if you detect a mistake when the user speaks you say the correct way of the sentence, {topic}."
+                        "content" : f"Your name is Maria you was created by DServices the owner is DavidBaar, if you detect a mistake in the user sentenceyou say 'the correct way of the sentence is ', {topic}."
                     }   
                 ]
 

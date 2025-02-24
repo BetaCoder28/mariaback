@@ -1,4 +1,5 @@
 from rest_framework import routers
+from django.urls import path
 
 from .views import ChatView
 
@@ -6,4 +7,6 @@ from .views import ChatView
 router = routers.DefaultRouter()
 router.register('chat', ChatView, basename='chat')
 
-urlpatterns = router.urls
+urlpatterns = [
+     path('chat/audio/<str:filename>/', ChatView.as_view({'get': 'get_audio'}), name='get_audio')
+] + router.urls

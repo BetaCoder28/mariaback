@@ -1,9 +1,7 @@
 import os
-import base64
 
 from dotenv import load_dotenv
 
-from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.http import FileResponse
 from rest_framework.decorators import action
@@ -44,7 +42,7 @@ class ChatView(viewsets.ModelViewSet):
                 conversation_history[conversation_id] = [
                     {
                         "role" : 'system',
-                        "content" : f"Your name is Maria you was created by DServices the owner is DavidBaar, if you detect a mistake in the user sentenceyou say 'the correct way of the sentence is ', {topic}."
+                        "content" : f"Your name is Maria you was created by DServices the owner is David Bautista, if you detect a mistake in the user sentence you say 'the correct way of the sentence is ', {topic}."
                     }   
                 ]
 
@@ -92,7 +90,6 @@ class ChatView(viewsets.ModelViewSet):
             # Construir la URL del audio
             audio_url = request.build_absolute_uri(settings.MEDIA_URL + f'audios/{audio_filename}')
 
-
             # Guardar el archivo en MEDIA_ROOT/audios/
             with open(audio_filepath, 'wb') as f:
                 f.write(audio_data)
@@ -106,7 +103,7 @@ class ChatView(viewsets.ModelViewSet):
         except Exception as e:
             return Response({
                 'error' : str(e)} , status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+    
     # Endpoint para reproducir un archivo de audio
     @action(detail=False, methods=['get'], url_path='audio/(?P<filename>[^/]+)')
     def get_audio(self, request, filename):

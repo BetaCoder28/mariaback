@@ -9,8 +9,8 @@ from rest_framework import status, viewsets
 from rest_framework.response import Response
 
 from openai import OpenAI
-from .models import Messages
-from .serializers import MessagesSerializer
+from .models import Messages, Feedback
+from .serializers import MessagesSerializer, FeedbackSerializer
 
 load_dotenv()
 
@@ -94,7 +94,6 @@ class ChatView(viewsets.ModelViewSet):
             with open(audio_filepath, 'wb') as f:
                 f.write(audio_data)
 
-
             return Response({
                 'text' : assistant_message,
                 'audio' : audio_url
@@ -112,3 +111,70 @@ class ChatView(viewsets.ModelViewSet):
         if os.path.exists(file_path):
             return FileResponse(open(file_path, 'rb'), content_type='audio/mpeg')
         return Response({"error": "Archivo no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+    
+
+#FEEDBACK 
+class FeedbackView(viewsets.ModelViewSet):
+    
+    queryset = Feedback.objects.all()
+    serializer_class = FeedbackSerializer
+
+    feedback_history = {}
+
+    def create(self, request):
+        try:
+            serializer = FeedbackSerializer(data=request.data)
+            if not serializer.is_valid():
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+            data = serializer.validated_data
+            conversation = data['conversation']
+            print('conversation : -> ', conversation)
+            conversation_id = request.data.get('conversation_id','default_conversation')
+
+            if conversation_id not in self.feedback_history:
+                self.feedback_history[conversation_id] = [
+                    {
+                        "role" : "system",
+                        "content" : """Analyze a conversation between a virtual assistant and a user. Follow these steps:
+                                    Focus exclusively on the user’s messages: Ignore all responses from the virtual assistant. Only analyze the user’s inputs.
+                                    Identify communication errors: Look for grammatical mistakes (e.g., incorrect verb tenses, spelling errors, word order issues) and informal/ambiguous phrasing that reduces clarity.
+                                    Generate structured feedback: Return a JSON object named feedback with the following fields:
+                                    general: A brief summary of the user’s overall communication issues.
+                                    grammar: A list of specific grammatical errors with corrections (format: "Incorrect: [error] → Correct: [correction]").
+                                    example: A rewritten version of the user’s most problematic sentence, showing corrections.
+                                    motivational_message: A short, positive message to encourage improvement.
+                                    Requirements:
+
+                                    The JSON must use double quotes and valid syntax (no trailing commas).
+                                    Keep feedback clear, specific, and actionable.
+                                    Example of the expected JSON structure:
+                                    {
+                                    "general": "The user frequently mixes verb tenses and uses informal phrasing.",
+                                    "grammar": "Incorrect: 'She go to school' → Correct: 'She goes to school'",
+                                    "example": "Original: 'I needs help' → Corrected: 'I need help'",
+                                    "motivational_message": "You’re making progress! Keep practicing for even better results!"
+                                    }
+                                    Important: Do NOT analyze the assistant’s messages. Focus only on the user’s text.
+
+                                    """
+                    }
+                ]
+            
+            self.feedback_history[conversation_id].append({
+                "role" : 'user',
+                "content" : conversation
+            }) 
+            print(str(self.feedback_history))
+
+            feedback = client.chat.completions.create(
+                model = "gpt-4o-mini",
+                messages = self.feedback_history[conversation_id],
+                temperature = 0.3
+            )
+
+            feedbackResponse = feedback.choices[0].message.content
+            return Response({'feedback' : feedbackResponse}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({'error' : f'{e}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

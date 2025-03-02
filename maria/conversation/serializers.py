@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Messages
+from .models import Messages, Feedback
 
 
 class MessagesSerializer(serializers.ModelSerializer):
@@ -26,4 +26,14 @@ class MessagesSerializer(serializers.ModelSerializer):
             self.fields.pop('topic')
 
     
+class FeedbackSerializer(serializers.ModelSerializer):
+    
+    conversation_id = serializers.CharField(required=False, default="default_conversation")
+
+    class Meta:
+        model = Feedback
+        fields = [
+            'conversation',
+            'conversation_id'
+        ]
 

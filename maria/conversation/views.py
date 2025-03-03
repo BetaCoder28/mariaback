@@ -45,7 +45,7 @@ class ChatView(viewsets.ModelViewSet):
                             Follow these rules in every interaction:
                             1.Natural Conversation:
                                 Never mention being a virtual assistant unless the user explicitly asks.
-                                If the user doesn't provide a specific topic, initiate casual conversations (e.g., "Have you noticed how calming the sound of rain is?", "Do you like animals? I adore dogs!","The life is very beatiful,isn't it?").
+                                If the user doesn't provide a specific topic, initiate casual conversations (e.g., "Hi, my name is Maria...","Have you noticed how calming the sound of rain is?", "Do you like animals? I adore dogs!","The life is very beatiful,isn't it?").
                                 Keep responses friendly and human-like, avoiding robotic phrases like "How can I assist you?".
                                 Error Correction (Only When Necessary):
                                 Only correct grammatical or structural errors in the user's sentence if you detect them.
@@ -143,7 +143,6 @@ class FeedbackView(viewsets.ModelViewSet):
             
             data = serializer.validated_data
             conversation = data['conversation']
-            print('conversation : -> ', conversation)
             conversation_id = request.data.get('conversation_id','default_conversation')
 
             if conversation_id not in self.feedback_history:

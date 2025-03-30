@@ -8,6 +8,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('conversation.urls')),
     path('api/', include('user.urls')),
+    path('api/', include('lessons.urls')),
 ]
 
 # Servir archivos estáticos en desarrollo

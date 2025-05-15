@@ -1,0 +1,24 @@
+# Entornos virtuales y variables de entorno
+.env/
+.env
+venv/
+
+# Migraciones de bases de datos
+/migrations/
+migrations/
+
+# Archivos multimedia
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+
+# Directorios de medios
+/images/
+/videos/
+/media/
